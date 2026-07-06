@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+from core.logging import LoggingMiddleware
 
 app = FastAPI()
+
+app.add_middleware(LoggingMiddleware)
 
 
 @app.get("/")
