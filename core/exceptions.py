@@ -2,7 +2,7 @@ class AppException(Exception):
     """Base class for all custom application exceptions."""
 
     status_code: int = 500
-    error_code: str = "internal_error"
+    error_code: str = "INTERNAL_ERROR"
     message: str = "An unexpected error occurred"
 
     def __init__(self, message: str | None = None, **extra):
@@ -13,35 +13,35 @@ class AppException(Exception):
 
 class NotFoundError(AppException):
     status_code = 404
-    error_code = "not_found"
+    error_code = "NOT_FOUND"
     message = "Resource not found"
 
 
 class UnauthorizedError(AppException):
     status_code = 401
-    error_code = "unauthorized"
+    error_code = "UNAUTHORIZED"
     message = "Authentication required"
 
 
 class ForbiddenError(AppException):
     status_code = 403
-    error_code = "forbidden"
+    error_code = "FORBIDDEN"
     message = "You don't have permission to perform this action"
 
 
 class ConflictError(AppException):
     status_code = 409
-    error_code = "conflict"
+    error_code = "CONFLICT"
     message = "Resource already exists"
 
 
 class ValidationError(AppException):
     status_code = 422
-    error_code = "validation_error"
+    error_code = "VALIDATION_ERROR"
     message = "Invalid input"
 
 
 class RateLimitError(AppException):
     status_code = 429
-    error_code = "rate_limited"
+    error_code = "RATE_LIMITED"
     message = "Too many requests, please try again later"
