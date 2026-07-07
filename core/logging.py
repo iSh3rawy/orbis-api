@@ -1,40 +1,40 @@
 import sys
-import time
 from loguru import logger
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
-
-logger.remove()
-
-logger.add(
-    sys.stdout,
-    level="DEBUG",
-    format=(
-        "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> "
-        "| <level>{level:<7}</level> "
-        "| <cyan>{name}</cyan>.<cyan>{function}</cyan>:<cyan>{line}</cyan> "
-        "- <level>{message}</level>"
-    ),
-    colorize=True,
-    backtrace=True,
-    diagnose=True,
-    enqueue=True,
-)
+from core.config import settings
 
 
-class LoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        start = time.perf_counter()
+def configure_logging():
+    logger.remove()
 
-        response: Response = await call_next(request)
+    logger.add(
+        sys.stdout,
+        level="DEBUG" if settings.DEBUG else "INFO",
+        format=(
+            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> "
+            "| <level>{level:<7}</level> "
+            "| <cyan>{extra[request_id]}</cyan> "
+            "| <cyan>{name}</cyan>.<cyan>{function}</cyan>:<cyan>{line}</cyan> "
+            "- <level>{message}</level>"
+        ),
+        colorize=True,
+        backtrace=True,
+        diagnose=settings.DEBUG,
+        enqueue=True,
+    )
 
-        duration = (time.perf_counter() - start) * 1000
+    logger.add(
+        "logs/app.log",
+        level="INFO",
+        rotation="00:00",
+        retention="14 days",
+        compression="zip",
+        format=(
+            "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<7} | {extra[request_id]} | "
+            "{name}.{function}:{line} - {message}"
+        ),
+        enqueue=True,
+        backtrace=True,
+        diagnose=False,
+    )
 
-        logger.info(
-            f"{request.method} {request.url.path} "
-            f"- status={response.status_code} "
-            f"- duration={duration:.2f}ms"
-        )
-
-        return response
+    logger.configure(extra={"request_id": "-"})
