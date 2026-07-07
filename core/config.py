@@ -1,4 +1,4 @@
-from pydantic import PostgresDsn
+from pydantic import PostgresDsn, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from enum import Enum
@@ -20,7 +20,15 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: Environment = Environment.LOCAL
 
+    DEBUG: bool = True
+
     DATABASE_URL: PostgresDsn
+
+    REFRESH_TOKEN_SECRET: str = Field(min_length=32)
+    ACCESS_TOKEN_SECRET: str = Field(min_length=32)
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
 
 @lru_cache
