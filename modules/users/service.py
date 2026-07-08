@@ -1,13 +1,13 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from modules.auth.schemas import UserCreateRequest
+from modules.auth.schemas import RegisterRequest
 from modules.users.models import User
 from modules.users.exceptions import EmailAlreadyExistsError
 from core.security import hash_password
 
 
-def create_user(db: Session, user_in: UserCreateRequest):
+def create_user(db: Session, user_in: RegisterRequest):
     stmt = select(User).where(User.email == user_in.email)
     existing_user = db.execute(stmt).scalar_one_or_none()
     if existing_user:
