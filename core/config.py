@@ -20,6 +20,8 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: Environment = Environment.LOCAL
 
+    API_VERSION: str = "1"
+
     DEBUG: bool = True
 
     DATABASE_URL: PostgresDsn
