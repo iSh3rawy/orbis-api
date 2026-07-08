@@ -1,6 +1,5 @@
 import re
 from pydantic import BaseModel, EmailStr, Field, field_validator
-from modules.users.schemas import UserResponse
 
 
 class RegisterRequest(BaseModel):
@@ -28,10 +27,3 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
-
-
-class LoginResponse(BaseModel):
-    user: UserResponse
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
