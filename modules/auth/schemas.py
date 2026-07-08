@@ -1,5 +1,6 @@
 import re
 from pydantic import BaseModel, EmailStr, Field, field_validator
+from modules.users.schemas import UserResponse
 
 
 class RegisterRequest(BaseModel):
@@ -22,3 +23,15 @@ class RegisterRequest(BaseModel):
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
             raise ValueError("Password must contain at least one special character.")
         return value
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    user: UserResponse
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
