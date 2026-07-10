@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Response, Depends, status
+from fastapi import APIRouter, Request, Response, Depends, status
 from sqlalchemy.orm import Session
-from modules.auth.schemas import RegisterRequest, LoginRequest
+from modules.auth.schemas import RegisterRequest, LoginRequest, LoginResponse
 from modules.auth.service import authenticate_user
 from modules.users.schemas import UserResponse
 from modules.users.service import create_user
 from core.database import get_db
+from core.security import decode_refresh_token
 from core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -23,16 +24,6 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
     user, access_token, refresh_token = authenticate_user(data, db)
 
     response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=True,
-        samesite="strict",
-        max_age=60 * settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-        path="/",
-    )
-
-    response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
@@ -42,4 +33,6 @@ def login(data: LoginRequest, response: Response, db: Session = Depends(get_db))
         path=f"api/v{settings.API_VERSION}/auth/refresh",
     )
 
-    return UserResponse.model_validate(user)
+    return LoginResponse(
+        user=UserResponse.model_validate(user), access_token=access_token
+    )
