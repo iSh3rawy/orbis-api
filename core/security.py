@@ -23,7 +23,7 @@ def create_access_token(subject: str) -> str:
     payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
-        "type": "access_token",
+        "type": "access",
     }
     encoded_jwt = jwt.encode(
         payload, settings.ACCESS_TOKEN_SECRET, algorithm=settings.JWT_ALGORITHM
@@ -38,7 +38,7 @@ def create_refresh_token(subject: str) -> str:
     payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
-        "type": "refresh_token",
+        "type": "refresh",
     }
     encoded_jwt = jwt.encode(
         payload, settings.REFRESH_TOKEN_SECRET, algorithm=settings.JWT_ALGORITHM
